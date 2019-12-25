@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 应用名.apps.应用名Config
     'projects.apps.ProjectsConfig',
+    'interfaces.apps.InterfacesConfig',
 ]
 
 MIDDLEWARE = [
