@@ -9,7 +9,7 @@ class Interfaces(models.Model):
 	需要在多的一侧，去创建外键
 	"""
 	name = models.CharField(verbose_name='接口名称', help_text='接口名称', unique=True,
-	                        max_length=100)
+	                        max_length=200)
 	tester = models.CharField(verbose_name='测试人员', help_text='测试人员',
 	                          max_length=50)
 	desc = models.CharField(verbose_name='简要描述', help_text='简要描述', max_length=200,
@@ -30,3 +30,5 @@ class Interfaces(models.Model):
 		db_table = "tb_interfaces"
 		verbose_name = "接口"
 
+	def __str__(self):
+		return self.name
