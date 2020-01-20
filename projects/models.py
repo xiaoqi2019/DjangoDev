@@ -42,4 +42,5 @@ class Projects(models.Model):
 		verbose_name = '项目'
 
 	def __str__(self):
+		# 数据库操作时返回表内值
 		return self.name
