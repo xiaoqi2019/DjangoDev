@@ -1,6 +1,7 @@
 from django.db import models
 
 # Create your models here.
+from projects.models import Projects
 
 class Interfaces(models.Model):
 	"""
@@ -8,10 +9,8 @@ class Interfaces(models.Model):
 	一个项目有多个接口，一个接口往往属于一个项目，项目和接口关系：一对多
 	需要在多的一侧，去创建外键
 	"""
-	name = models.CharField(verbose_name='接口名称', help_text='接口名称', unique=True,
-	                        max_length=200)
-	tester = models.CharField(verbose_name='测试人员', help_text='测试人员',
-	                          max_length=50)
+	name = models.CharField(verbose_name='接口名称', help_text='接口名称', unique=True, max_length=200)
+	tester = models.CharField(verbose_name='测试人员', help_text='测试人员', max_length=50)
 	desc = models.CharField(verbose_name='简要描述', help_text='简要描述', max_length=200,
 	                        default='', blank=True, null=True)
 	# 创建外键
