@@ -1,22 +1,92 @@
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+import json
+
+from django.http import HttpResponse, JsonResponse, request
 
 # Create your views here.
 from django.views import View
 
-# from projects.models import Projects # 导入方法1
 from interfaces.models import Interfaces
-from .models import Projects # 导入方法2（常用）
+from .models import Projects # 导入
 
-def index(request):
-	"""视图函数
-	：:param request:
-	:return:
-	"""
-	return HttpResponse("<h1>hello,python测开大佬!</h1>")
+class ProjectList(View):  # 相同url --get /projects  post /projects
+	def get(self, request):
+		"""获取项目列表数据
+		:param request
+		:return:
+		"""
+		# 从数据库获取所有项目信息
+		project_qs = Projects.objects.all()
+		# 将模型类对象转化为字典类型，构造嵌套字典的列表
+		project_list = []
+		for project in project_qs:
+			project_list.append({
+				"id":project.id,
+				"name":project.name,
+				"leader": project.leader,
+				"tester": project.tester,
+				"programmer": project.programmer,
+				"publish_app":project.publish_app,
+				"desc":project.desc
+			})
+		return JsonResponse(project_list, safe=False)
 
-class IndexView(View):
-	# def get(self, request):
+	def post(self, request):
+		"""创建一个项目
+		:param request:
+		:return:"""
+		# q1:前端传参，以哪种形式传参-json
+		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
+		json_data = request.body
+		# 转成字典
+		python_data = json.loads(json_data, encoding='utf-8')
+		# 向数据库新增项目
+		# project_name = python_data["name"]
+		# project_leader = python_data["leader"]
+		# project_tester = python_data["tester"]
+		# project_programmer = python_data["programmer"]
+		# project_publish_app = python_data["publish_app"]
+		# project_desc = python_data["desc"]
+
+		# 方法1
+		# one_project = Projects(name=project_name,
+		# 											leader=project_leader,
+		#                       tester=project_tester,
+		#                        programmer=project_programmer,
+		#                        publish_app=project_publish_app,
+		#                        desc=project_desc)
+		# one_project.save()
+
+		# 方法2--不需要save()
+		project = Projects.objects.create(**python_data)
+		# 返回新创建的结果（返回新增项目的数据）
+		one_dict = {
+				"id":project.id,
+				"name":project.name,
+				"leader":project.leader,
+				"tester":project.tester,
+				"programmer":project.programmer,
+				"publish_app":project.publish_app,
+				"desc":project.desc
+		}
+		return JsonResponse(one_dict)
+
+
+
+
+class ProjectEdit(View):
+	def get(self, request, pk):
+		pass
+
+	def put(self, request, pk):
+		pass
+
+	def delete(self, request, pk):
+		pass
+
+
+
+# class IndexView(View):
+# def get(self, request):
 	# 	# 查询方法
 	# 	# 获取一张表中的所有记录
 	# 	# 1：调用all()方法返回QuerySet对象
@@ -57,21 +127,21 @@ class IndexView(View):
 	# 	# Projects.objects.update()
 
 
-	def get(self, request):
-		# 创建操作
-		# 方法1
-		# one_project = Projects(name='国产飞机项目1', leader="XXX院士",tester="测试1",
-		#                        programmer="龙的传人",publish_app="国产飞机应用",desc="项目简介")
-		# one_project.save()
-
-		# 方法2：
-		one_project = Projects.objects.create(name='国产飞机项目4', leader="XXX院士",tester="测试1",
-		                       programmer="龙的传人",publish_app="国产飞机应用",desc="项目简介")
-		# 关联键方法1
-		Interfaces.objects.create(name='国产飞机项目4登陆接口', tester='测试1',project=one_project)
-		# 关联键方法2
-		# Interfaces.objects.create(name='国产飞机项目4登陆接口',tester='测试1',project_id=one_project.id)
-		return HttpResponse("项目创建成功!")
+	# def get(self, request):
+	# 	# 创建操作
+	# 	# 方法1
+	# 	# one_project = Projects(name='国产飞机项目1', leader="XXX院士",tester="测试1",
+	# 	#                        programmer="龙的传人",publish_app="国产飞机应用",desc="项目简介")
+	# 	# one_project.save()
+	#
+	# 	# 方法2：
+	# 	one_project = Projects.objects.create(name='国产飞机项目4', leader="XXX院士",tester="测试1",
+	# 	                       programmer="龙的传人",publish_app="国产飞机应用",desc="项目简介")
+	# 	# 关联键方法1
+	# 	Interfaces.objects.create(name='国产飞机项目4登陆接口', tester='测试1',project=one_project)
+	# 	# 关联键方法2
+	# 	# Interfaces.objects.create(name='国产飞机项目4登陆接口',tester='测试1',project_id=one_project.id)
+	# 	return HttpResponse("项目创建成功!")
 
 	# def get(self, request):
 	# 	data = [
