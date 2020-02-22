@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework', # 引入DRF框架
+
     # 应用名.apps.应用名Config
     'projects.apps.ProjectsConfig',
     'interfaces.apps.InterfacesConfig',
@@ -46,7 +48,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware', # 自己注释是因为post请求时总是提示：CSRF验证失败. 请求被中断
+    #'django.middleware.csrf.CsrfViewMiddleware', # 自己注释是因为post请求时总是提示：CSRF验证失败. 请求被中断
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

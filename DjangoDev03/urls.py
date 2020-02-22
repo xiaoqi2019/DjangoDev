@@ -27,5 +27,6 @@ urlpatterns = [
     # path('index/',index),
     # 6：如果path函数的第二个参数为include，那么会进入子路由中去匹配
     # include往往第一个参数是字符串，子应用名.urls
-    path("",include("projects.urls"))
+    path("",include("projects.urls")),
+    path("",include("interfaces.urls"))
 ]

@@ -6,7 +6,7 @@ from . import views
 urlpatterns = [
     # 子路由（子应用下创建的路由表）
     path("projects/", views.ProjectList.as_view()),
-    path("projects/<int:pk>", views.ProjectEdit.as_view())
+    path("projects/<int:pk>/", views.ProjectDetail.as_view())
     # path('index_page/',index),
     # # 如果使用类视图，那么path函数的第二个参数为：类视图名.as_view()
     # path('index/',IndexView.as_view()),

@@ -4,9 +4,11 @@ from django.http import HttpResponse, JsonResponse, request
 
 # Create your views here.
 from django.views import View
+from django.views.decorators.csrf import csrf_exempt
 
 from interfaces.models import Interfaces
 from .models import Projects # 导入
+
 
 class ProjectList(View):  # 相同url --get /projects  post /projects
 	def get(self, request):
@@ -37,8 +39,7 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		# q1:前端传参，以哪种形式传参-json
 		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
 		json_data = request.body
-		# 转成字典
-		python_data = json.loads(json_data, encoding='utf-8')
+		python_data = json.loads(json_data, encoding='utf-8') # 转成字典
 		# 向数据库新增项目
 		# project_name = python_data["name"]
 		# project_leader = python_data["leader"]
@@ -68,20 +69,83 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 				"publish_app":project.publish_app,
 				"desc":project.desc
 		}
+		return JsonResponse(one_dict,status=201) # 特别注意这里：get方式状态码200，但是post/put/patch需要返回201才算成功；
+
+
+
+
+class ProjectDetail(View):
+	def get(self, request, pk):
+		"""
+		获取指定项目的信息
+		:param request:
+		:param pk:
+		:return:
+		"""
+		# 1.校验PK值
+		# 2.获取指定pk值的项目
+		one_project = Projects.objects.get(pk=pk)
+		# 将模型类对象转化成字段
+		# 返回结果
+		one_dict = {
+			"id": one_project.id,
+			"name": one_project.name,
+			"leader": one_project.leader,
+			"tester": one_project.tester,
+			"programmer": one_project.programmer,
+			"publish_app": one_project.publish_app,
+			"desc": one_project.desc
+		}
+		# safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
 		return JsonResponse(one_dict)
 
-
-
-
-class ProjectEdit(View):
-	def get(self, request, pk):
-		pass
-
 	def put(self, request, pk):
-		pass
+		"""
+		更新指定项目
+		:param request:
+		:param pk:
+		:return:
+		"""
+		# 1.校验PK值
+		# 2.获取指定pk值的项目
+		one_project = Projects.objects.get(pk=pk)
+		# 3.q1:前端传参，以哪种形式传参-json
+		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
+		json_data = request.body
+		python_data = json.loads(json_data, encoding='utf-8') # 转成字典
+		# 3.更新项目--必须save()
+		one_project.name = python_data['name']
+		one_project.leader = python_data['leader']
+		one_project.tester = python_data['tester']
+		one_project.programmer = python_data['programmer']
+		one_project.publish_app = python_data['publish_app']
+		one_project.desc = python_data['desc']
+		one_project.save()
+		# 4.返回结果
+		one_dict = {
+			"id": one_project.id,
+			"name": one_project.name,
+			"leader": one_project.leader,
+			"tester": one_project.tester,
+			"programmer": one_project.programmer,
+			"publish_app": one_project.publish_app,
+			"desc": one_project.desc}
+		return JsonResponse(one_dict, status=201) # safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
 
 	def delete(self, request, pk):
-		pass
+		"""
+		删除指定项目
+		:param request:
+		:param pk:
+		:return:
+		"""
+		# 1.校验前端传递的pk值
+		# 2.获取指定pk的项目
+		one_project = Projects.objects.get(pk=pk)
+		# 3.删除项目
+		one_project.delete()
+		# 4.返回
+		return JsonResponse(None, safe=False, status=204)
 
 
 
