@@ -1,13 +1,12 @@
 import json
 
-from django.http import HttpResponse, JsonResponse, request
+from django.http import HttpResponse, JsonResponse, request, Http404
 
 # Create your views here.
 from django.views import View
-from django.views.decorators.csrf import csrf_exempt
-
 from interfaces.models import Interfaces
 from .models import Projects # 导入
+from .serializers import ProjectSerializer # 导入序列化类
 
 
 class ProjectList(View):  # 相同url --get /projects  post /projects
@@ -19,18 +18,20 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		# 从数据库获取所有项目信息
 		project_qs = Projects.objects.all()
 		# 将模型类对象转化为字典类型，构造嵌套字典的列表
-		project_list = []
-		for project in project_qs:
-			project_list.append({
-				"id":project.id,
-				"name":project.name,
-				"leader": project.leader,
-				"tester": project.tester,
-				"programmer": project.programmer,
-				"publish_app":project.publish_app,
-				"desc":project.desc
-			})
-		return JsonResponse(project_list, safe=False)
+		# project_list = []
+		# for project in project_qs:
+		# 	project_list.append({
+		# 		"id":project.id,
+		# 		"name":project.name,
+		# 		"leader": project.leader,
+		# 		"tester": project.tester,
+		# 		"programmer": project.programmer,
+		# 		"publish_app":project.publish_app,
+		# 		"desc":project.desc
+		# 	})
+		# 返回多条数据（列表数据）那么many=True
+		serialize = ProjectSerializer(instance=project_qs, many=True)
+		return JsonResponse(serialize.data, safe=False)
 
 	def post(self, request):
 		"""创建一个项目
@@ -40,6 +41,12 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
 		json_data = request.body
 		python_data = json.loads(json_data, encoding='utf-8') # 转成字典
+		# 1.接收参数（转化为Python中的基本类型&数据校验）
+		# 反序列化传参使用data接收参数（接收字典），序列化传参需要instance接收参数（接收json格式）
+		# 需要先调用.is_valid()方法，才可以调用.errors()查看错误信息，如果校验正确，那么错误信息为空字典
+		# 只有通过序列化器对象调用.is_valid()方法，才可以数据校验（字段参数）
+		serialize = ProjectSerializer(data=python_data)
+		serialize.is_valid()
 		# 向数据库新增项目
 		# project_name = python_data["name"]
 		# project_leader = python_data["leader"]
@@ -75,6 +82,11 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 
 
 class ProjectDetail(View):
+	def get_object(self, pk):
+		try:
+			return Projects.objects.get(pk=pk)
+		except Projects.DoesNotExist:
+			raise Http404
 	def get(self, request, pk):
 		"""
 		获取指定项目的信息
@@ -84,20 +96,23 @@ class ProjectDetail(View):
 		"""
 		# 1.校验PK值
 		# 2.获取指定pk值的项目
-		one_project = Projects.objects.get(pk=pk)
+		one_project = self.get_object(pk)
 		# 将模型类对象转化成字段
 		# 返回结果
-		one_dict = {
-			"id": one_project.id,
-			"name": one_project.name,
-			"leader": one_project.leader,
-			"tester": one_project.tester,
-			"programmer": one_project.programmer,
-			"publish_app": one_project.publish_app,
-			"desc": one_project.desc
-		}
+		# one_dict = {
+		# 	"id": one_project.id,
+		# 	"name": one_project.name,
+		# 	"leader": one_project.leader,
+		# 	"tester": one_project.tester,
+		# 	"programmer": one_project.programmer,
+		# 	"publish_app": one_project.publish_app,
+		# 	"desc": one_project.desc
+		# }
+
+		# 使用序列化类
+		serialize = ProjectSerializer(instance=one_project)
 		# safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
-		return JsonResponse(one_dict)
+		return JsonResponse(serialize.data)
 
 	def put(self, request, pk):
 		"""
@@ -108,7 +123,7 @@ class ProjectDetail(View):
 		"""
 		# 1.校验PK值
 		# 2.获取指定pk值的项目
-		one_project = Projects.objects.get(pk=pk)
+		one_project = self.get_object(pk)
 		# 3.q1:前端传参，以哪种形式传参-json
 		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
 		json_data = request.body
@@ -122,15 +137,16 @@ class ProjectDetail(View):
 		one_project.desc = python_data['desc']
 		one_project.save()
 		# 4.返回结果
-		one_dict = {
-			"id": one_project.id,
-			"name": one_project.name,
-			"leader": one_project.leader,
-			"tester": one_project.tester,
-			"programmer": one_project.programmer,
-			"publish_app": one_project.publish_app,
-			"desc": one_project.desc}
-		return JsonResponse(one_dict, status=201) # safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
+		# one_dict = {
+		# 	"id": one_project.id,
+		# 	"name": one_project.name,
+		# 	"leader": one_project.leader,
+		# 	"tester": one_project.tester,
+		# 	"programmer": one_project.programmer,
+		# 	"publish_app": one_project.publish_app,
+		# 	"desc": one_project.desc}
+		serialize = ProjectSerializer(instance=one_project)
+		return JsonResponse(serialize.data, status=201) # safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
 
 	def delete(self, request, pk):
 		"""
@@ -141,7 +157,7 @@ class ProjectDetail(View):
 		"""
 		# 1.校验前端传递的pk值
 		# 2.获取指定pk的项目
-		one_project = Projects.objects.get(pk=pk)
+		one_project = self.get_object(pk)
 		# 3.删除项目
 		one_project.delete()
 		# 4.返回
