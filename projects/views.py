@@ -30,7 +30,7 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		# 		"desc":project.desc
 		# 	})
 		# 返回多条数据（列表数据）那么many=True
-		serialize = ProjectSerializer(instance=project_qs, many=True)
+		serialize = ProjectSerializer(instance=project_qs, many=True) #序列化传参需要instance接收参数（接收json格式）
 		return JsonResponse(serialize.data, safe=False)
 
 	def post(self, request):
@@ -45,8 +45,16 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		# 反序列化传参使用data接收参数（接收字典），序列化传参需要instance接收参数（接收json格式）
 		# 需要先调用.is_valid()方法，才可以调用.errors()查看错误信息，如果校验正确，那么错误信息为空字典
 		# 只有通过序列化器对象调用.is_valid()方法，才可以数据校验（字段参数）
-		serialize = ProjectSerializer(data=python_data)
-		serialize.is_valid()
+		serialize = ProjectSerializer(data=python_data) # 反序列化传参使用data接收参数（接收字典）
+		# 校验方法1
+		# if not serialize.is_valid():
+		# 	return JsonResponse(serialize.errors, status=400)
+		# 校验方法2（常用，代码简介，一个内置参数解决，但是暂时不会抛出异常，需要加一些配置才可以）
+		# is_valid()方法中，raise_exception设置为True，那么校验失败后会自动抛出异常，异常信息会被自动处理
+		try:
+			serialize.is_valid(raise_exception=True)
+		except Exception:
+			return JsonResponse(serialize.errors, status=400)
 		# 向数据库新增项目
 		# project_name = python_data["name"]
 		# project_leader = python_data["leader"]
@@ -65,18 +73,20 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		# one_project.save()
 
 		# 方法2--不需要save()
-		project = Projects.objects.create(**python_data)
+		project = Projects.objects.create(**serialize.validated_data) # 将验证通过后的数据返回
+		# project = Projects.objects.create(**python_data)
 		# 返回新创建的结果（返回新增项目的数据）
-		one_dict = {
-				"id":project.id,
-				"name":project.name,
-				"leader":project.leader,
-				"tester":project.tester,
-				"programmer":project.programmer,
-				"publish_app":project.publish_app,
-				"desc":project.desc
-		}
-		return JsonResponse(one_dict,status=201) # 特别注意这里：get方式状态码200，但是post/put/patch需要返回201才算成功；
+		# one_dict = {
+		# 		"id":project.id,
+		# 		"name":project.name,
+		# 		"leader":project.leader,
+		# 		"tester":project.tester,
+		# 		"programmer":project.programmer,
+		# 		"publish_app":project.publish_app,
+		# 		"desc":project.desc
+		# }
+		serialize = ProjectSerializer(instance=project)
+		return JsonResponse(serialize.data, status=201) # 特别注意这里：get方式状态码200，但是post/put/patch需要返回201才算成功；
 
 
 
