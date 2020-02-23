@@ -17,21 +17,9 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		"""
 		# 从数据库获取所有项目信息
 		project_qs = Projects.objects.all()
-		# 将模型类对象转化为字典类型，构造嵌套字典的列表
-		# project_list = []
-		# for project in project_qs:
-		# 	project_list.append({
-		# 		"id":project.id,
-		# 		"name":project.name,
-		# 		"leader": project.leader,
-		# 		"tester": project.tester,
-		# 		"programmer": project.programmer,
-		# 		"publish_app":project.publish_app,
-		# 		"desc":project.desc
-		# 	})
 		# 返回多条数据（列表数据）那么many=True
 		serialize = ProjectSerializer(instance=project_qs, many=True) #序列化传参需要instance接收参数（接收json格式）
-		return JsonResponse(serialize.data, safe=False)
+		return JsonResponse(serialize.data, safe=False) # safe=False返回只要是非字典都要添加
 
 	def post(self, request):
 		"""创建一个项目
@@ -41,54 +29,17 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
 		json_data = request.body
 		python_data = json.loads(json_data, encoding='utf-8') # 转成字典
-		# 1.接收参数（转化为Python中的基本类型&数据校验）
-		# 反序列化传参使用data接收参数（接收字典），序列化传参需要instance接收参数（接收json格式）
-		# 需要先调用.is_valid()方法，才可以调用.errors()查看错误信息，如果校验正确，那么错误信息为空字典
-		# 只有通过序列化器对象调用.is_valid()方法，才可以数据校验（字段参数）
-		serialize = ProjectSerializer(data=python_data) # 反序列化传参使用data接收参数（接收字典）
-		# 校验方法1
-		# if not serialize.is_valid():
-		# 	return JsonResponse(serialize.errors, status=400)
-		# 校验方法2（常用，代码简介，一个内置参数解决，但是暂时不会抛出异常，需要加一些配置才可以）
-		# is_valid()方法中，raise_exception设置为True，那么校验失败后会自动抛出异常，异常信息会被自动处理
+		serializer = ProjectSerializer(data=python_data) # 反序列化传参使用data接收参数（接收字典）
 		try:
-			serialize.is_valid(raise_exception=True)
+			serializer.is_valid(raise_exception=True)
 		except Exception:
-			return JsonResponse(serialize.errors, status=400)
-		# 向数据库新增项目
-		# project_name = python_data["name"]
-		# project_leader = python_data["leader"]
-		# project_tester = python_data["tester"]
-		# project_programmer = python_data["programmer"]
-		# project_publish_app = python_data["publish_app"]
-		# project_desc = python_data["desc"]
-
-		# 方法1
-		# one_project = Projects(name=project_name,
-		# 											leader=project_leader,
-		#                       tester=project_tester,
-		#                        programmer=project_programmer,
-		#                        publish_app=project_publish_app,
-		#                        desc=project_desc)
-		# one_project.save()
-
-		# 方法2--不需要save()
-		project = Projects.objects.create(**serialize.validated_data) # 将验证通过后的数据返回
-		# project = Projects.objects.create(**python_data)
-		# 返回新创建的结果（返回新增项目的数据）
-		# one_dict = {
-		# 		"id":project.id,
-		# 		"name":project.name,
-		# 		"leader":project.leader,
-		# 		"tester":project.tester,
-		# 		"programmer":project.programmer,
-		# 		"publish_app":project.publish_app,
-		# 		"desc":project.desc
-		# }
-		serialize = ProjectSerializer(instance=project)
-		return JsonResponse(serialize.data, status=201) # 特别注意这里：get方式状态码200，但是post/put/patch需要返回201才算成功；
-
-
+			return JsonResponse(serializer.errors, status=400)
+		# project = Projects.objects.create(**serialize.validated_data)
+		# 创建序列化对象时，给data传参
+		# 调用save(),会自动调用create()方法
+		serializer.save()
+		# serialize = ProjectSerializer(instance=project)
+		return JsonResponse(serializer.data, status=201)
 
 
 class ProjectDetail(View):
@@ -104,24 +55,9 @@ class ProjectDetail(View):
 		:param pk:
 		:return:
 		"""
-		# 1.校验PK值
-		# 2.获取指定pk值的项目
 		one_project = self.get_object(pk)
-		# 将模型类对象转化成字段
-		# 返回结果
-		# one_dict = {
-		# 	"id": one_project.id,
-		# 	"name": one_project.name,
-		# 	"leader": one_project.leader,
-		# 	"tester": one_project.tester,
-		# 	"programmer": one_project.programmer,
-		# 	"publish_app": one_project.publish_app,
-		# 	"desc": one_project.desc
-		# }
-
 		# 使用序列化类
 		serialize = ProjectSerializer(instance=one_project)
-		# safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
 		return JsonResponse(serialize.data)
 
 	def put(self, request, pk):
@@ -138,25 +74,17 @@ class ProjectDetail(View):
 		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
 		json_data = request.body
 		python_data = json.loads(json_data, encoding='utf-8') # 转成字典
-		# 3.更新项目--必须save()
-		one_project.name = python_data['name']
-		one_project.leader = python_data['leader']
-		one_project.tester = python_data['tester']
-		one_project.programmer = python_data['programmer']
-		one_project.publish_app = python_data['publish_app']
-		one_project.desc = python_data['desc']
-		one_project.save()
-		# 4.返回结果
-		# one_dict = {
-		# 	"id": one_project.id,
-		# 	"name": one_project.name,
-		# 	"leader": one_project.leader,
-		# 	"tester": one_project.tester,
-		# 	"programmer": one_project.programmer,
-		# 	"publish_app": one_project.publish_app,
-		# 	"desc": one_project.desc}
-		serialize = ProjectSerializer(instance=one_project)
-		return JsonResponse(serialize.data, status=201) # safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
+		serializer = ProjectSerializer(data=python_data, instance=one_project)
+		try:
+			serializer.is_valid(raise_exception=True)
+		except Exception:
+			raise JsonResponse(serializer.errors, status=400)
+		python_data = serializer.validated_data
+		# 创建序列化对象时，给instance和data同时传参
+		# 调用save(),会自动调用uodate()方法
+		serializer.save()
+		# serializer = ProjectSerializer(instance=one_project)
+		return JsonResponse(serializer.data, status=201) # safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
 
 	def delete(self, request, pk):
 		"""
@@ -168,9 +96,7 @@ class ProjectDetail(View):
 		# 1.校验前端传递的pk值
 		# 2.获取指定pk的项目
 		one_project = self.get_object(pk)
-		# 3.删除项目
 		one_project.delete()
-		# 4.返回
 		return JsonResponse(None, safe=False, status=204)
 
 

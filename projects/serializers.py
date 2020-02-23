@@ -78,4 +78,31 @@ class ProjectSerializer(serializers.Serializer):
 			raise serializers.ValidationError("项目名称或者负责人中至少有一个包含‘小七’")
 		return attrs
 
+	def create(self, validated_data):
+		"""
+		创建项目
+		:param validated_data: 校验通过之后的项目数据
+		:return: 项目创建成功之后的模型类对象返回
+		"""
+		project = Projects.objects.create(**validated_data)
+		return project
+
+	def update(self, instance, validated_data):
+		"""
+		更新项目
+		:param instance: 待更新的项目模型类对象
+		:param validated_data:
+		:return:项目更新成功之后的模型类对象返回
+		"""
+		# 3.更新项目--必须save()
+		instance.name = validated_data['name']
+		instance.leader = validated_data['leader']
+		instance.tester = validated_data['tester']
+		instance.programmer = validated_data['programmer']
+		instance.publish_app = validated_data['publish_app']
+		instance.desc = validated_data['desc']
+		instance.save()
+		return instance
+
+
 
