@@ -38,10 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework', # 引入DRF框架
-
-    # 应用名.apps.应用名Config
-    'projects.apps.ProjectsConfig',
+    'projects.apps.ProjectsConfig', # 子应用添加应用名.apps.应用名Config
     'interfaces.apps.InterfacesConfig',
+    'django_filters' # 过滤引擎添加
 ]
 
 MIDDLEWARE = [
@@ -133,12 +132,23 @@ STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     # 默认响应渲染类
-    'DEFAULT_RENDERER_CLASSES': (
+    'DEFAULT_RENDERER_CLASSES': [
         # Json渲染器为第一优先级
         'rest_framework.renderers.JSONRenderer',
         # 可浏览的API渲染器为第二优先级--不需要可以注释掉即可
-        #'rest_framework.renderers.TemplateHTMLRenderer',
-    )
+        # 'rest_framework.renderers.TemplateHTMLRenderer',
+    ],
+    # 默认过滤引擎，默认路径
+    "DEFAULT_FILTER_BACKENDS":
+        [
+            'django_filters.rest_framework.backends.DjangoFilterBackend', # 过滤引擎路径
+            'rest_framework.filters.OrderingFilter' # 排序引擎路径
+        ],
+    # 全局指定分页引擎类
+    'DEFAULT_PAGINATION_CLASS':
+        # 'rest_framework.pagination.PageNumberPagination',
+        'utils.pagination.ManualPageNumberPagination',
+    # 一定要指定每页获取的条数
+    'PAGE_SIZE': 3,
 }
-
 

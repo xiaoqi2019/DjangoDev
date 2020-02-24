@@ -4,26 +4,59 @@ from django.http import HttpResponse, JsonResponse, request, Http404
 
 # Create your views here.
 from django.views import View
+
+from django_filters.rest_framework import DjangoFilterBackend # 导入过滤
 from rest_framework import status
+from rest_framework.filters import OrderingFilter
+from rest_framework.generics import GenericAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
 from interfaces.models import Interfaces
 from .models import Projects # 导入
 from .serializers import ProjectModelSerializer # 导入序列化类
 from rest_framework.views import APIView
+from rest_framework import mixins
 
 
-class ProjectList(APIView):  # 相同url --get /projects  post /projects
+# 1.要实现过滤排序分页功能，需要继承DRF中的GenericAPIView
+class ProjectList(mixins.ListModelMixin,
+                  GenericAPIView):  # 相同url --get /projects  post /projects
+	# 往往要指定queryset查询集类属性
+	queryset = Projects.objects.all()
+	# 往往需要serializer_class指定，要是用的序列化器类
+	serializer_class = ProjectModelSerializer
+	# filter_backends指定过滤引擎和排序引擎
+	# 如果在全局配置变量中指定了，这里无需再次指认
+	# filter_backends = [DjangoFilterBackend, OrderingFilter] # 列表，可以些多个过滤引擎
+	# pagination_class = [PageNumberPagination] # 指定分页引擎
+	# filterset_fields指定可以过滤的字段，只能是模型类定义字段，而且是全匹配，不是模糊匹配
+	filterset_fields = ['name', 'leader', 'tester']
+	# 指定排序字段，默认使用ordering作为key，指定字段名为value，默认升序，需要降序，字段前加减号
+	ordering_fields = ['id', 'name', 'leader'] # 指定排序字段
+
+	# def get(self, request):
+	# 	"""获取项目列表数据
+	# 	:param request
+	# 	:return:
+	# 	"""
+	# 	# 使用get_queryset方法获取查询集对象
+	# 	# project_qs = self.get_queryset() # 查询集对象中有100条项目模型对象
+	# 	project_qs = self.filter_queryset(self.get_queryset()) # 过滤之后可能只有20条
+	# 	page = self.paginate_queryset(project_qs)
+	# 	if page is not None:
+	# 		serializer = self.get_serializer(instance=page, many=True)
+	# 		return self.get_paginated_response(serializer.data)
+	# 	# name = request.query_params.get('name')
+	# 	# if name is not None:
+	# 	# 	project_qs = project_qs.filter(name_contains=name)
+	# 	# 返回多条数据（列表数据）那么many=True
+	# 	# 以后获取需要使用的序列化器类，不要用serializer_class,而使用get_serializer()
+	# 	serializer = self.get_serializer(instance=project_qs, many=True) #序列化传参需要instance接收参数（接收json格式）
+	# 	return Response(serializer.data, status=status.HTTP_200_OK) # safe=False返回只要是非字典都要添加
+
 	def get(self, request):
-		"""获取项目列表数据
-		:param request
-		:return:
-		"""
-		# 从数据库获取所有项目信息
-		project_qs = Projects.objects.all()
-		# 返回多条数据（列表数据）那么many=True
-		serializer = ProjectModelSerializer(instance=project_qs, many=True) #序列化传参需要instance接收参数（接收json格式）
-		return Response(serializer.data, status=status.HTTP_200_OK) # safe=False返回只要是非字典都要添加
+		return self.list(request)
 
 	def post(self, request):
 		"""创建一个项目
@@ -47,12 +80,12 @@ class ProjectList(APIView):  # 相同url --get /projects  post /projects
 		return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class ProjectDetail(APIView):
-	def get_object(self, pk):
-		try:
-			return Projects.objects.get(pk=pk)
-		except Projects.DoesNotExist:
-			raise Http404
+class ProjectDetail(GenericAPIView):
+	# 往往要指定queryset查询集类属性
+	queryset = Projects.objects.all()
+	# 往往需要serializer_class指定，要是用的序列化器类
+	serializer_class = ProjectModelSerializer
+
 	def get(self, request, pk):
 		"""
 		获取指定项目的信息
@@ -60,9 +93,8 @@ class ProjectDetail(APIView):
 		:param pk:
 		:return:
 		"""
-		one_project = self.get_object(pk)
-		# 使用序列化类
-		serialize = ProjectModelSerializer(instance=one_project)
+		one_project = self.get_object()
+		serialize = self.get_serializer(instance=one_project)
 		return Response(serialize.data, status=status.HTTP_200_OK)
 
 	def put(self, request, pk):
@@ -74,12 +106,12 @@ class ProjectDetail(APIView):
 		"""
 		# 1.校验PK值
 		# 2.获取指定pk值的项目
-		one_project = self.get_object(pk)
+		one_project = self.get_object()
 		# 3.q1:前端传参，以哪种形式传参-json
 		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
 		# json_data = request.body
 		# python_data = json.loads(json_data, encoding='utf-8') # 转成字典
-		serializer = ProjectModelSerializer(data=request.data, instance=one_project)
+		serializer = self.get_serializer(data=request.data, instance=one_project)
 		try:
 			serializer.is_valid(raise_exception=True)
 		except Exception:
@@ -98,7 +130,7 @@ class ProjectDetail(APIView):
 		"""
 		# 1.校验前端传递的pk值
 		# 2.获取指定pk的项目
-		one_project = self.get_object(pk)
+		one_project = self.get_object()
 		one_project.delete()
 		return Response(None, status=status.HTTP_204_NO_CONTENT)
 
