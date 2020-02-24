@@ -4,12 +4,16 @@ from django.http import HttpResponse, JsonResponse, request, Http404
 
 # Create your views here.
 from django.views import View
+from rest_framework import status
+from rest_framework.response import Response
+
 from interfaces.models import Interfaces
 from .models import Projects # 导入
-from .serializers import ProjectSerializer # 导入序列化类
+from .serializers import ProjectModelSerializer # 导入序列化类
+from rest_framework.views import APIView
 
 
-class ProjectList(View):  # 相同url --get /projects  post /projects
+class ProjectList(APIView):  # 相同url --get /projects  post /projects
 	def get(self, request):
 		"""获取项目列表数据
 		:param request
@@ -18,8 +22,8 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		# 从数据库获取所有项目信息
 		project_qs = Projects.objects.all()
 		# 返回多条数据（列表数据）那么many=True
-		serialize = ProjectSerializer(instance=project_qs, many=True) #序列化传参需要instance接收参数（接收json格式）
-		return JsonResponse(serialize.data, safe=False) # safe=False返回只要是非字典都要添加
+		serializer = ProjectModelSerializer(instance=project_qs, many=True) #序列化传参需要instance接收参数（接收json格式）
+		return Response(serializer.data, status=status.HTTP_200_OK) # safe=False返回只要是非字典都要添加
 
 	def post(self, request):
 		"""创建一个项目
@@ -27,22 +31,23 @@ class ProjectList(View):  # 相同url --get /projects  post /projects
 		:return:"""
 		# q1:前端传参，以哪种形式传参-json
 		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
-		json_data = request.body
-		python_data = json.loads(json_data, encoding='utf-8') # 转成字典
-		serializer = ProjectSerializer(data=python_data) # 反序列化传参使用data接收参数（接收字典）
+		# json_data = request.body
+		# python_data = json.loads(json_data, encoding='utf-8') # 转成字典
+		# 继承DRF框架中APIView之后，request是DRF框架中的Request对象
+		#
+		serializer = ProjectModelSerializer(data=request.data) # 反序列化传参使用data接收参数（接收字典）
 		try:
 			serializer.is_valid(raise_exception=True)
 		except Exception:
-			return JsonResponse(serializer.errors, status=400)
+			return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 		# project = Projects.objects.create(**serialize.validated_data)
 		# 创建序列化对象时，给data传参
 		# 调用save(),会自动调用create()方法
 		serializer.save()
-		# serialize = ProjectSerializer(instance=project)
-		return JsonResponse(serializer.data, status=201)
+		return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-class ProjectDetail(View):
+class ProjectDetail(APIView):
 	def get_object(self, pk):
 		try:
 			return Projects.objects.get(pk=pk)
@@ -57,8 +62,8 @@ class ProjectDetail(View):
 		"""
 		one_project = self.get_object(pk)
 		# 使用序列化类
-		serialize = ProjectSerializer(instance=one_project)
-		return JsonResponse(serialize.data)
+		serialize = ProjectModelSerializer(instance=one_project)
+		return Response(serialize.data, status=status.HTTP_200_OK)
 
 	def put(self, request, pk):
 		"""
@@ -72,19 +77,17 @@ class ProjectDetail(View):
 		one_project = self.get_object(pk)
 		# 3.q1:前端传参，以哪种形式传参-json
 		# q2:接收参数转化成python的基本类型&参数校验-校验过程比较复杂，当前省略
-		json_data = request.body
-		python_data = json.loads(json_data, encoding='utf-8') # 转成字典
-		serializer = ProjectSerializer(data=python_data, instance=one_project)
+		# json_data = request.body
+		# python_data = json.loads(json_data, encoding='utf-8') # 转成字典
+		serializer = ProjectModelSerializer(data=request.data, instance=one_project)
 		try:
 			serializer.is_valid(raise_exception=True)
 		except Exception:
-			raise JsonResponse(serializer.errors, status=400)
-		python_data = serializer.validated_data
-		# 创建序列化对象时，给instance和data同时传参
-		# 调用save(),会自动调用uodate()方法
+			raise Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+		# 更新项目创建序列化对象时，给instance和data同时传参
+		# 调用save(),会自动调用update()方法
 		serializer.save()
-		# serializer = ProjectSerializer(instance=one_project)
-		return JsonResponse(serializer.data, status=201) # safe=False只有在返回json格式的数据时需要加，这里one_dict是字典格式不需要加
+		return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 	def delete(self, request, pk):
 		"""
@@ -97,7 +100,7 @@ class ProjectDetail(View):
 		# 2.获取指定pk的项目
 		one_project = self.get_object(pk)
 		one_project.delete()
-		return JsonResponse(None, safe=False, status=204)
+		return Response(None, status=status.HTTP_204_NO_CONTENT)
 
 
 
