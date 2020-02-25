@@ -39,8 +39,8 @@ class ProjectModelSerializer(serializers.ModelSerializer):
 		model = Projects
 		# 2.指定为模型类的那些字段来生成序列化器字段
 		# 3.会将模型类的主键自动添加read_only=True
-		# fields = '__all__' # __all__表示所有字段
-		# fields元祖中指定的是，所有序列化器字段（哪怕模型类中不包含的字段也要在fields元祖内指定）
+		# fields = '__all__' # __all__表示输出所有字段
+		# fields元祖中指定的是，所有序列化器字段（哪怕模型类中不包含的字段只要在本类定义了也要在fields元祖内指定）
 		fields = ('id', 'name', 'leader', 'tester', 'programmer', 'publish_app', 'interfaces_set')
 		# 指定read_only为True的字段
 		# read_only_fields = ('desc')
@@ -78,6 +78,14 @@ class ProjectModelSerializer(serializers.ModelSerializer):
 		if "领导" not in name and "领导" not in leader:
 			raise serializers.ValidationError("项目名称或者负责人中至少有一个包含‘小七’")
 		return attrs
+
+
+class ProjectNamesModelSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Projects
+		fields = ("id", "name")
+
 
 
 
