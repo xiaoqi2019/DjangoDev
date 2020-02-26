@@ -25,7 +25,10 @@ SECRET_KEY = '0qgx5+#ej(s!y&#xz%0^7&g_onma($v%gentp_0ksgzaxo6jp7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ["外网ip", "localhost", "127.0.0.1"]
+# 设置可以用于访问项目的地址（ip,域名）
+# 默认只能使用本地地址访问项目，*表示都可以
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -154,5 +157,46 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS":
         # 指定用于支持cpreapi的Schema,DRF>3.10需要添加如下配置
         "rest_framework.schemas.coreapi.AutoSchema",
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(asctime)s - [%(levelname)s] - %(name)s - [msg]%(message)s - [%(filename)s:%(lineno)d]'
+        },
+        'simple': {
+            'format': '%(asctime)s - [%(levelname)s] - [msg]%(message)s'
+        }
+    },
+    'handlers': {
+        'file': {
+             'level': 'INFO',
+             'class': 'logging.handlers.RotatingFileHandler',
+             'filename': os.path.join(BASE_DIR, 'logs/test.log'),  # 日志文件位置
+             'maxBytes': 100 * 1024 * 1024,  # 日志文件大小
+             'backupCount': 10,  # 日志文件最大个数
+             'formatter': 'verbose'
+        },
+        'console': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'test': {  # 定义了一个名为test的日志器
+            'handlers': ['console', 'file'],
+            'level': 'DEBUG',  # 日志器接受的最低日志级别
+            'propagate': True  # 是否继承父类的log信息
+        },
+    }
 }
 
