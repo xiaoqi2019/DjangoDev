@@ -132,12 +132,13 @@ STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     # 默认响应渲染类
-    'DEFAULT_RENDERER_CLASSES': [
-        # Json渲染器为第一优先级
-        'rest_framework.renderers.JSONRenderer',
-        # 可浏览的API渲染器为第二优先级--不需要可以注释掉即可
-        # 'rest_framework.renderers.TemplateHTMLRenderer',
-    ],
+    # 'DEFAULT_RENDERER_CLASSES': [
+    #     # Json渲染器为第一优先级
+    #     'rest_framework.renderers.JSONRenderer',
+    #     # 可浏览的API渲染器为第二优先级--不需要可以注释掉即可
+    #     # 'rest_framework.renderers.TemplateHTMLRenderer',
+    # ],
+
     # 默认过滤引擎，默认路径
     "DEFAULT_FILTER_BACKENDS":
         [
