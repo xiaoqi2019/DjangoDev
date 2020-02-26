@@ -22,11 +22,14 @@ from django.urls import path, include
 # 3：从上往下匹配，如果可以匹配上，Django会自动调用path函数的第二个参数指定的视图（函数视图）
 # 4：如果匹配不上，会自动抛出404异常（默认为404.状态码为404）
 # 5：一旦匹配成功，不会继续往下匹配
+from rest_framework.documentation import include_docs_urls
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     # path('index/',index),
     # 6：如果path函数的第二个参数为include，那么会进入子路由中去匹配
     # include往往第一个参数是字符串，子应用名.urls
     path("",include("projects.urls")),
-    path("",include("interfaces.urls"))
+    path("",include("interfaces.urls")),
+    path("docs/", include_docs_urls(title="测试平台接口文档")),
 ]

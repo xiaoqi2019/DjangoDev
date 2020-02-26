@@ -27,8 +27,35 @@ from rest_framework import viewsets
 # 	serializer_class = ProjectModelSerializer
 
 class ProjectViewSet(viewsets.ModelViewSet):
+	"""
+	list:
+	获取项目列表数据
+
+	create:
+	创建项目
+
+	destroy:
+	删除项目
+
+	update:
+	完整更新项目
+
+	partial_update:
+	部分更新项目
+
+	retrieve:
+	获取项目详情数据
+
+	names:
+	获取所有项目ID和项目名
+
+	interfaces:
+	获取某个项目下的所有接口信息
+
+	"""
 	queryset = Projects.objects.all()
 	serializer_class = ProjectModelSerializer
+	# 需要分页过滤排序可以加上下面的三行
 	filter_backends = [DjangoFilterBackend, OrderingFilter]
 	filterset_fields = ['name', 'leader', 'tester']
 	ordering_fields = ['id', 'name', 'leader']
@@ -41,9 +68,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 		return Response(serializer.data)
 
 	# 获取某个项目的接口列表
-	# @action(detail=True)
-	# def interfaces(self, request, *args, **kwargs):
-	# 	pass
+	@action(detail=True)
+	def interfaces(self, request, *args, **kwargs):
+		pass
 
 
 	def get_serializer_class(self):

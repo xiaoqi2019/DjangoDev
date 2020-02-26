@@ -151,5 +151,8 @@ REST_FRAMEWORK = {
         'utils.pagination.ManualPageNumberPagination',
     # 一定要指定每页获取的条数
     'PAGE_SIZE': 3,
+    "DEFAULT_SCHEMA_CLASS":
+        # 指定用于支持cpreapi的Schema,DRF>3.10需要添加如下配置
+        "rest_framework.schemas.coreapi.AutoSchema",
 }
 
