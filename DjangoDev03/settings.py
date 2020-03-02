@@ -11,9 +11,12 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.join(BASE_DIR, 'apps')) # 加到系统路径列表的尾部
+# sys.path.insert(0, os.path.join(BASE_DIR, 'apps')) # 加到系统路径列表的头部
 
 
 # Quick-start development settings - unsuitable for production
@@ -43,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework', # 引入DRF框架
     'projects.apps.ProjectsConfig', # 子应用添加应用名.apps.应用名Config
     'interfaces.apps.InterfacesConfig',
+    'users.apps.UsersConfig',
     'django_filters' # 过滤引擎添加
 ]
 
@@ -157,6 +161,15 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS":
         # 指定用于支持cpreapi的Schema,DRF>3.10需要添加如下配置
         "rest_framework.schemas.coreapi.AutoSchema",
+    # 指定认证类
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # DRF默认情况下，使用的是会话认证
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication'],
+    # 认定授权类
+    'DEFAULT_PERMISSION_CLASSES':
+        # DER默认情况下的权限：AllowAny（允许所以用户访问）
+        ['rest_framework.permissions.AllowAny', ],
 }
 
 LOGGING = {
