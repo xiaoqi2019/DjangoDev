@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from django.urls import path
 from . import views
+from rest_framework import routers
 
-
-urlpatterns = [
-    # 子路由（子应用下创建的路由表）
-    path("interfaces/", views.InterfaceList.as_view()),
-    path("interfaces/<int:pk>/", views.InterfaceDetail.as_view())
-]
+router = routers.DefaultRouter()
+router.register(r"interfaces", views.InterfaceViewSet)
+urlpatterns = []
+urlpatterns += router.urls
 

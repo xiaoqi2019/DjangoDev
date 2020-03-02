@@ -19,11 +19,13 @@ class Projects(models.Model):
 	# unique来设置当前字段是否唯一，默认False
 	# max_length 设置限制字段的最大长度
 	id = models.AutoField(verbose_name='id主键', primary_key=True, help_text='id主键')
-	name = models.CharField(verbose_name='项目名称', help_text='项目名称', unique=True, max_length=200)
+	name = models.CharField(verbose_name='项目名称', help_text='项目名称', unique=True,
+													max_length=200)
 	leader = models.CharField(verbose_name='项目负责人', help_text='项目负责人', max_length=50)
 	tester = models.CharField(verbose_name='测试人员', help_text='测试人员', max_length=50)
 	programmer = models.CharField(verbose_name='开发人员', help_text='开发人员', max_length=50)
-	publish_app = models.CharField(verbose_name='发布应用', help_text='发布应用', max_length=200)
+	publish_app = models.CharField(verbose_name='发布应用', help_text='发布应用',
+	                               max_length=200)
 	# default 指定默认值
 	# blank 设置在创建项目时前端可以不传此字段
 	# null 设置数据库此字段允许为空

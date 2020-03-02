@@ -182,7 +182,8 @@ LOGGING = {
              'filename': os.path.join(BASE_DIR, 'logs/test.log'),  # 日志文件位置
              'maxBytes': 100 * 1024 * 1024,  # 日志文件大小
              'backupCount': 10,  # 日志文件最大个数
-             'formatter': 'verbose'
+             'formatter': 'verbose',
+             'encoding': 'utf-8' # 防止输出的日志乱码
         },
         'console': {
             'level': 'DEBUG',

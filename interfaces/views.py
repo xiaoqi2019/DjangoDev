@@ -1,64 +1,72 @@
-# Create your views here.
-from django.views import View
+import logging
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import action
+from rest_framework.filters import OrderingFilter
+from rest_framework.generics import GenericAPIView
+from rest_framework.response import Response
 from .models import Interfaces
-from django.http import JsonResponse, Http404
 from .serializers import InterfaceModelSerializer
+from .serializers import InterfaceNameModelSerializer
+from rest_framework import mixins
+from rest_framework import generics
+from rest_framework import viewsets
+# from projects.serializers import ProjectsByProjectIdSerializer
+
+logger = logging.getLogger('test')
 
 
-class InterfaceList(View):
-	def get(self, request):
-		"""
-		获取接口列表
-		:param request:
-		:return:
-		"""
-		# 获取信息并返回列表，并进行排序
-		#interfaces = [i for i in Interfaces.objects.filter().values().order_by("project_id")] #Interfaces.objects.filter().values() # 返回的是字典
-		# 返回参数
-		interface_qs = Interfaces.objects.all()
-		serializer = InterfaceModelSerializer(instance=interface_qs, many=True)
-		return JsonResponse(serializer.data, safe=False) # 特别注意，这里返回的是列表集合，需要safe=False
+class InterfaceViewSet(viewsets.ModelViewSet):
+	"""
+	list:
+	获取接口列表数据
 
-	def post(self, request):
-		"""
-		创建接口
-		:param request:
-		:return:
-		"""
-		pass
+	create:
+	创建接口
 
-class InterfaceDetail(View):
-	def get_onject(self, pk):
-		try:
-			return Interfaces.objects.get(pk=pk)
-		except Exception:
-			raise Http404
-	def get(self, request, pk):
-		"""
-		获取接口详情
-		:param request:
-		:param pk:
-		:return:
-		"""
-		one_interface = self.get_onject(pk)
-		serializer = InterfaceModelSerializer(instance=one_interface)
-		return JsonResponse(serializer.data)
+	destroy:
+	删除接口
 
-	def put(self, request, pk):
-		"""
-		更新接口
-		:param request:
-		:param pk:
-		:return:
-		"""
+	update:
+	完整更新接口
 
-		pass
+	partial_update:
+	部分更新接口
 
-	def delete(self, request, pk):
-		"""
-		删除接口
-		:param request:
-		:param pk:
-		:return:
-		"""
-		pass
+	retrieve:
+	获取接口详情数据
+
+	names:
+	获取所有接口ID和接口名
+
+	# projects:
+	# 获取某个接口下的所有接口信息
+
+	"""
+	queryset = Interfaces.objects.all()
+	serializer_class = InterfaceModelSerializer
+	# 需要分页过滤排序可以加上下面的三行
+	filter_backends = [DjangoFilterBackend, OrderingFilter]
+	filterset_fields = ['name', 'tester']
+	ordering_fields = ['id', 'name']
+
+
+	@action(methods=['get'], detail=False)
+	def names(self, request, *args, **kwargs):
+		queryset = self.get_queryset()
+		serializer = self.get_serializer(instance=queryset, many=True)
+		return Response(serializer.data)
+
+	# # 获取某个项目的接口列表
+	# @action(detail=True)
+	# def projects(self, request, *args, **kwargs):
+	# 	instance = self.get_object()
+	# 	serializer = self.get_serializer(instance=instance)
+	# 	return Response(serializer.data)
+
+	def get_serializer_class(self):
+		if self.action == "names":
+			return InterfaceNameModelSerializer
+		elif self.action == "projects":
+			return ProjectsByProjectIdSerializer
+		return self.serializer_class
+

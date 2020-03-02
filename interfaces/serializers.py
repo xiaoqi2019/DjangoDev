@@ -3,12 +3,10 @@ from rest_framework import serializers
 from .models import Interfaces
 from projects.models import Projects
 
-
 class ProjectModelSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Projects
 		fields = '__all__'
-
 
 class InterfaceModelSerializer(serializers.ModelSerializer):
 	# 会自动化将外键字段生成PrimaryKeyRelatedField类型，返回的是外键表对应的id值
@@ -24,3 +22,8 @@ class InterfaceModelSerializer(serializers.ModelSerializer):
 		model = Interfaces
 		fields = '__all__'
 
+class InterfaceNameModelSerializer(serializers.ModelSerializer):
+	# 接口列表只返回接口id和接口name
+	class Meta:
+		model = Interfaces
+		fields = ("id", "name")

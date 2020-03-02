@@ -31,8 +31,8 @@ class ProjectModelSerializer(serializers.ModelSerializer):
 	#父类模型序列化器类不会创建子表字段，需要创建才能显示，如下：
 	# 子类模型序列化器类会创建子表字段，可以不用创建就可以显示；
 	# 如果是按照接口模型类指定的名字：interfaces，下面命名就按照指定的，没有就是interfaces_set
-	# 父类关联子类：
-	interfaces_set = serializers.StringRelatedField(many=True, read_only=True)
+	# 父类关联子类：many=True意思指一个项目下面可能会有多个接口
+	interfaces = serializers.StringRelatedField(many=True, read_only=True)
 
 	class Meta:
 		# 1.指定参照哪一个模型
@@ -41,7 +41,7 @@ class ProjectModelSerializer(serializers.ModelSerializer):
 		# 3.会将模型类的主键自动添加read_only=True
 		# fields = '__all__' # __all__表示输出所有字段
 		# fields元祖中指定的是，所有序列化器字段（哪怕模型类中不包含的字段只要在本类定义了也要在fields元祖内指定）
-		fields = ('id', 'name', 'leader', 'tester', 'programmer', 'publish_app', 'interfaces_set')
+		fields = ('id', 'name', 'leader', 'tester', 'programmer', 'publish_app', 'interfaces')
 		# 指定read_only为True的字段
 		# read_only_fields = ('desc')
 		# 排除不定义的字段--不输出字典
@@ -79,12 +79,27 @@ class ProjectModelSerializer(serializers.ModelSerializer):
 			raise serializers.ValidationError("项目名称或者负责人中至少有一个包含‘小七’")
 		return attrs
 
-
 class ProjectNamesModelSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Projects
 		fields = ("id", "name")
+
+class InterfaceNameModelSerializer(serializers.ModelSerializer):
+	# 接口列表只返回接口id和接口name
+	class Meta:
+		model = Interfaces
+		fields = ("id", "name")
+
+# 通过父表获取子表的信息
+class InterfacesByProjectIdSerializer(serializers.ModelSerializer):
+	interfaces = InterfaceNameModelSerializer(read_only=True, many=True)
+
+	class Meta:
+		model = Projects
+		fields = ("id", "interfaces")
+
+
 
 
 

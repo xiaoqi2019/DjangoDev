@@ -19,7 +19,7 @@ class Interfaces(models.Model):
 	# models.SET_NULL 子表自动设置为Null
 	# related_name 设置父表对子表引用名，如不指定，默认为子表模型类名小写_set(interfaces_set)
 	project = models.ForeignKey('projects.Projects', on_delete=models.CASCADE,
-	                            help_text='所属项目')
+	                            related_name='interfaces', help_text='所属项目')
 	create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间',
 	                                   help_text='创建时间')
 	update_time = models.DateTimeField(auto_now=True, verbose_name='更新时间',
