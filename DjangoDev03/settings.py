@@ -161,8 +161,11 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS":
         # 指定用于支持cpreapi的Schema,DRF>3.10需要添加如下配置
         "rest_framework.schemas.coreapi.AutoSchema",
-    # 指定认证类
+    # 指定认证类（指定是认证的方式）
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 可同时支持下面两种认证SESSION和Token认证
+        # 指定使用JWT Token认证
+        'rest_framework.authentication.JSONWebTokenAuthentication',
         # DRF默认情况下，使用的是会话认证
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication'],

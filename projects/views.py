@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from .models import Projects
 from .serializers import ProjectModelSerializer
 from .serializers import ProjectNamesModelSerializer
-from rest_framework import mixins
+from rest_framework import mixins, permissions
 from rest_framework import generics
 from rest_framework import viewsets
 from .serializers import InterfacesByProjectIdSerializer
@@ -48,6 +48,12 @@ class ProjectViewSet(viewsets.ModelViewSet):
 	filter_backends = [DjangoFilterBackend, OrderingFilter]
 	filterset_fields = ['name', 'leader', 'tester']
 	ordering_fields = ['id', 'name', 'leader']
+	# AllowAny 允许任何人访问接口
+	# IsAuthenticated 只有登录之后可以请求
+	# IsAdminUser 管理员才可以请求
+	# IsAuthenticatedOrReadOnly 登录才可以请求，不登录只能访问获取信息的接口
+	# 类视图指定优先级最高，类视图指定了，全局配置指定的就不生效了，如果类不指定权限，全局的则生效
+	permission_classes = [permissions.IsAuthenticated] # 只有登录之后才可以请求
 
 
 	@action(methods=['get'], detail=False)
