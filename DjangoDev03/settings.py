@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+import datetime
 import os
 import sys
 
@@ -149,8 +149,8 @@ REST_FRAMEWORK = {
     # 默认过滤引擎，默认路径
     "DEFAULT_FILTER_BACKENDS":
         [
-            'django_filters.rest_framework.backends.DjangoFilterBackend', # 过滤引擎路径
-            'rest_framework.filters.OrderingFilter' # 排序引擎路径
+            'django_filters.rest_framework.backends.DjangoFilterBackend',  # 过滤引擎路径
+            'rest_framework.filters.OrderingFilter'  # 排序引擎路径
         ],
     # 全局指定分页引擎类
     'DEFAULT_PAGINATION_CLASS':
@@ -165,14 +165,27 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 可同时支持下面两种认证SESSION和Token认证
         # 指定使用JWT Token认证
-        'rest_framework.authentication.JSONWebTokenAuthentication',
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
         # DRF默认情况下，使用的是会话认证
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication'],
-    # 认定授权类
+        'rest_framework.authentication.BasicAuthentication'
+    ],
+    # 认定授权类(指的是认证成功之后能干嘛)
     'DEFAULT_PERMISSION_CLASSES':
         # DER默认情况下的权限：AllowAny（允许所以用户访问）
-        ['rest_framework.permissions.AllowAny', ],
+        # IsAuthenticated 只有登录之后可以请求
+        ['rest_framework.permissions.IsAuthenticated']
+}
+
+# Token过期时间设置
+JWT_AUTH = {
+    # 默认token的过期时间为5分钟（seconds=300），可以指定过期时间为1天
+    # 'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    # 修改token值的前缀，默认JWT，可以修改成Bearer
+    # 前端在传递token值时，Authorization作为key,值为token
+    'JWT_AUTH_HEADER_PREFIX': 'JWT',
+    # 'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
 
 LOGGING = {
