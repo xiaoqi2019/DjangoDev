@@ -174,18 +174,22 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES':
         # DER默认情况下的权限：AllowAny（允许所以用户访问）
         # IsAuthenticated 只有登录之后可以请求
-        ['rest_framework.permissions.IsAuthenticated']
+        ['rest_framework.permissions.IsAuthenticated'],
 }
 
 # Token过期时间设置
 JWT_AUTH = {
     # 默认token的过期时间为5分钟（seconds=300），可以指定过期时间为1天
     # 'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
-    # 修改token值的前缀，默认JWT，可以修改成Bearer
-    # 前端在传递token值时，Authorization作为key,值为token
+    'JWT_EXPIRATION_DELTA':
+        datetime.timedelta(days=1),
+        # 修改token值的前缀，默认JWT，可以修改成Bearer
+        # 前端在传递token值时，Authorization作为key,值为token
     'JWT_AUTH_HEADER_PREFIX': 'JWT',
-    # 'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+        # 'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    # 指定返回前端的数据进行重写
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+        'utils.jwt_handle.jwt_response_payload_handler',
 }
 
 LOGGING = {
