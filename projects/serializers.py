@@ -48,7 +48,7 @@ class ProjectModelSerializer(serializers.ModelSerializer):
 		# exclude = ('create_time','update_time','desc')
 		# 如果只是改变某个字段的某个定义值，可以使用extra_kwargs嵌套字典的字典
 		extra_kwargs = {
-			"name":{
+			"name": {
 				"min_length":1,
 				# "validators":[is_unique_project_name, contain_keyword_project_name]
 			}

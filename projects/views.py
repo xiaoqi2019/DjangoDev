@@ -53,7 +53,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 	# IsAdminUser 管理员才可以请求
 	# IsAuthenticatedOrReadOnly 登录才可以请求，不登录只能访问获取信息的接口
 	# 类视图指定优先级最高，类视图指定了，全局配置指定的就不生效了，如果类不指定权限，全局的则生效
-	# permission_classes = [permissions.IsAuthenticated] # 只有登录之后才可以请求
+	permission_classes = [permissions.IsAuthenticated] # 只有登录之后才可以请求
 
 
 	@action(methods=['get'], detail=False)

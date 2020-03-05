@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from .models import Interfaces
 from .serializers import InterfaceModelSerializer
 from .serializers import InterfaceNameModelSerializer
-from rest_framework import mixins
+from rest_framework import mixins, permissions
 from rest_framework import generics
 from rest_framework import viewsets
 # from projects.serializers import ProjectsByProjectIdSerializer
@@ -48,6 +48,8 @@ class InterfaceViewSet(viewsets.ModelViewSet):
 	filter_backends = [DjangoFilterBackend, OrderingFilter]
 	filterset_fields = ['name', 'tester']
 	ordering_fields = ['id', 'name']
+	# 制定登陆之后才操作接口
+	permission_classes = [permissions.IsAuthenticated]
 
 
 	@action(methods=['get'], detail=False)

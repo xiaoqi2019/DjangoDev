@@ -170,11 +170,13 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.BasicAuthentication'
     ],
-    # 认定授权类(指的是认证成功之后能干嘛)
-    'DEFAULT_PERMISSION_CLASSES':
-        # DER默认情况下的权限：AllowAny（允许所以用户访问）
-        # IsAuthenticated 只有登录之后可以请求
-        ['rest_framework.permissions.IsAuthenticated'],
+    # 认定授权类(指的是认证成功之后能干嘛)--
+    # 如果让注册登录查看api文档这些接口不需要登录就可以用呢？？？
+    # ---------全局默认允许所有，在需要制定授权类视图里面单独制定权限
+    # 'DEFAULT_PERMISSION_CLASSES':
+    #     # DER默认情况下的权限：AllowAny（允许所以用户访问）
+    #     # IsAuthenticated 只有登录之后可以请求
+    #     ['rest_framework.permissions.IsAuthenticated'],
 }
 
 # Token过期时间设置
