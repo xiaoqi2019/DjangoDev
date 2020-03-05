@@ -25,7 +25,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 				'help_text': '用户名',
 				'max_length': 20,
 				'min_length': 6,
-				'error_message': {
+				'error_messages': {
 					'min_length': '仅允许6-20个字符的用户名',
 					'max_length': '仅允许6-20个字符的用户名',
 				}
@@ -44,7 +44,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 				'write_only': True,  # 只输入不输出
 				'max_length': 20,
 				'min_length': 6,
-				'error_message': {
+				'error_messages': {
 					'min_length': '仅允许6-20个字符的密码',
 					'max_length': '仅允许6-20个字符的密码',
 				}
