@@ -48,6 +48,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 	filter_backends = [DjangoFilterBackend, OrderingFilter]
 	filterset_fields = ['name', 'leader', 'tester']
 	ordering_fields = ['id', 'name', 'leader']
+
 	# AllowAny 允许任何人访问接口
 	# IsAuthenticated 只有登录之后可以请求
 	# IsAdminUser 管理员才可以请求
