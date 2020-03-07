@@ -37,28 +37,43 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',  # 解决前后端跨域问题
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework', # 引入DRF框架
-    'projects.apps.ProjectsConfig', # 子应用添加应用名.apps.应用名Config
+    'rest_framework',  # 引入DRF框架
+    'projects.apps.ProjectsConfig',  # 子应用添加应用名.apps.应用名Config
     'interfaces.apps.InterfacesConfig',
     'users.apps.UsersConfig',
-    'django_filters' # 过滤引擎添加
+    'django_filters',  # 过滤引擎添加
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    # 解决跨域需要添加的中间件，必须添加在CommonMiddleware之前
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware', # 自己注释是因为post请求时总是提示：CSRF验证失败. 请求被中断
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# CORS_ORIGIN_ALLOW_ALL为True，指定所有域名（ip）都可以访问后端接口，默认为False
+CORS_ORIGIN_ALLOW_ALL = True
+
+# CORS_ORIGIN_WHITELIST指定能够访问后端接口的ip或者域名列表(和上面的允许所以二选一)
+# CORS_ORIGIN_WHITELIST = [
+#     "http://127.0.0.1:8080",
+#     "http://localhost:8080"
+# ]
+
+# 允许跨域携带Cookie，默认为False
+CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'DjangoDev03.urls'
 
