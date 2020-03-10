@@ -72,3 +72,30 @@ class RegisterSerializer(serializers.ModelSerializer):
 		return user
 
 
+class UsernameSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = ('username')
+		extra_kwargs = {
+			'username': {
+				'label': '用户名',
+				'help_text': '用户名',
+				'validators': [
+					UniqueValidator(queryset=User.objects.all(), message='此用户已注册')],
+			}
+		}
+
+class EmailSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = User
+		fields = ('email')
+		# model指定的模型中没有的字段，不能在extra_kwargs中来定义，extra_kwargs只能重写已有字段
+		extra_kwargs = {
+			'email': {
+				'label': '邮箱',
+				'help_text': '邮箱',
+				'write_only': True,
+				# 添加邮箱重复校验
+				'validators': [UniqueValidator(queryset=User.objects.all(), message='此邮箱已注册')],
+			}
+		}
