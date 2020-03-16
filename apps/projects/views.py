@@ -2,13 +2,12 @@ import logging
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
-from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from .models import Projects
 from .serializers import ProjectModelSerializer
 from .serializers import ProjectNamesModelSerializer
-from rest_framework import mixins
 from rest_framework import generics
+from rest_framework import mixins
 from rest_framework import viewsets
 from .serializers import InterfacesByProjectIdSerializer
 
@@ -57,7 +56,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 		# logger.error('这里有一个严重的错误')
 		return Response(serializer.data)
 
-	# 获取某个项目的接口列表
+	# 获取某个项目的接口列表--定义action尽量使用名词复数
 	@action(detail=True)
 	def interfaces(self, request, *args, **kwargs):
 		instance = self.get_object()

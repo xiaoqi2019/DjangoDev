@@ -1,20 +1,19 @@
-from django.shortcuts import render
-from requests import Response
-from rest_framework.generics import CreateAPIView, RetrieveAPIView
+from rest_framework import generics
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from . import serializers
 
 
-class RegisterView(CreateAPIView):
+class RegisterView(generics.CreateAPIView):
 	"""
 	注册接口
 	"""
 	serializer_class = serializers.RegisterSerializer
 
-class UsernameCountView(APIView):
+class UsernameValidateView(APIView):
 	"""
-	验证用户名是否存在
+	校验用户名
 	"""
 	def get(self, request, username):
 		"""
@@ -23,17 +22,16 @@ class UsernameCountView(APIView):
 		:param username:
 		:return:
 		"""
-		count = User.objects.filter(username=username).count()
-		data = {
+		data_dict = {
 			"username": username,
-			"count": count
+			"count": User.objects.filter(username=username).count()
 		}
-		return Response(data=data)
+		return Response(data_dict)
 
 
-class EmailCountView(APIView):
+class EmailValidateView(APIView):
 	"""
-	验证邮箱是否存在
+	校验邮箱
 	"""
 
 	def get(self, request, email):
@@ -43,12 +41,11 @@ class EmailCountView(APIView):
 		:param username:
 		:return:
 		"""
-		count = User.objects.filter(username=email).count()
-		data = {
+		data_dict = {
 			"email": email,
-			"count": count
+			"count": User.objects.filter(email=email).count()
 		}
-		return Response(data=data)
+		return Response(data_dict)
 
 
 
