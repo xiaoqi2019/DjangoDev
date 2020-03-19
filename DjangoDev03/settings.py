@@ -49,6 +49,12 @@ INSTALLED_APPS = [
     'interfaces.apps.InterfacesConfig',
     'users.apps.UsersConfig',
     'django_filters',  # 过滤引擎添加
+    'testcases.apps.TestcasesConfig',
+    'testsuits.apps.TestsuitsConfig',
+    'reports.apps.ReportsConfig',
+    'envs.apps.EnvsConfig',
+    'debugtalks.apps.DebugtalksConfig',
+    'configures.apps.ConfiguresConfig',
 ]
 
 MIDDLEWARE = [
