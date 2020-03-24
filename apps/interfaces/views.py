@@ -8,9 +8,7 @@ from .models import Interfaces
 from .serializers import InterfaceModelSerializer
 from .serializers import InterfaceNameModelSerializer
 from rest_framework import mixins, permissions
-from rest_framework import generics
 from rest_framework import viewsets
-# from projects.serializers import ProjectsByProjectIdSerializer
 
 logger = logging.getLogger('test')
 
@@ -65,10 +63,10 @@ class InterfaceViewSet(viewsets.ModelViewSet):
 	# 	serializer = self.get_serializer(instance=instance)
 	# 	return Response(serializer.data)
 
-	def get_serializer_class(self):
-		if self.action == "names":
-			return InterfaceNameModelSerializer
-		elif self.action == "projects":
-			return ProjectsByProjectIdSerializer
-		return self.serializer_class
+	# def get_serializer_class(self):
+	# 	if self.action == "names":
+	# 		return InterfaceNameModelSerializer
+	# 	elif self.action == "projects":
+	# 		return ProjectsByProjectIdSerializer
+	# 	return self.serializer_class
 

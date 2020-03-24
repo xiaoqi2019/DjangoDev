@@ -111,7 +111,7 @@ DATABASES = {
         # 指定数据库引擎
         'ENGINE':'django.db.backends.mysql',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME':'dev03', # 指定数据库名
+        'NAME':'dev_django', # 指定数据库名
         'USER':'root', # 数据库用户名
         'PASSWORD':'root', # 数据库密码
         'HOST':'localhost', # 数据库主机域名或者ip
@@ -175,11 +175,11 @@ REST_FRAMEWORK = {
         ],
     # 全局指定分页引擎类
     'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.PageNumberPagination',
+	    # 'rest_framework.pagination.PageNumberPagination',
     #     # 指定下面的就是使用'http://localhost:9000/projects/?p=1&s=3'格式
-    #     'utils.pagination.ManualPageNumberPagination',
+        'utils.pagination.ManualPageNumberPagination',
     # 一定要指定每页获取的条数
-    'PAGE_SIZE': 3,
+    'PAGE_SIZE': 10,
     "DEFAULT_SCHEMA_CLASS":
         # 指定用于支持cpreapi的Schema,DRF>3.10需要添加如下配置
         "rest_framework.schemas.coreapi.AutoSchema",
@@ -193,10 +193,9 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.BasicAuthentication'
     ],
     # 认定授权类(指的是认证成功之后能干嘛)--
-    # 如果让注册登录查看api文档这些接口不需要登录就可以用呢？？？
     # ---------全局默认允许所有，在需要制定授权类视图里面单独制定权限
     # 'DEFAULT_PERMISSION_CLASSES':
-    #     # DER默认情况下的权限：AllowAny（允许所以用户访问）
+    #     # DER默认情况下的权限AllowAny（允许所以用户访问）
     #     # IsAuthenticated 只有登录之后可以请求
     #     ['rest_framework.permissions.IsAuthenticated'],
 }
@@ -205,15 +204,12 @@ REST_FRAMEWORK = {
 JWT_AUTH = {
     # 默认token的过期时间为5分钟（seconds=300），可以指定过期时间为1天
     # 'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
-    'JWT_EXPIRATION_DELTA':
-        datetime.timedelta(days=1),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
         # 修改token值的前缀，默认JWT，可以修改成Bearer
         # 前端在传递token值时，Authorization作为key,值为token
-    'JWT_AUTH_HEADER_PREFIX': 'JWT',
-        # 'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+    # 'JWT_AUTH_HEADER_PREFIX': 'Bearer',
     # 指定返回前端的数据进行重写
-    'JWT_RESPONSE_PAYLOAD_HANDLER':
-        'utils.jwt_handle.jwt_response_payload_handler',
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'utils.jwt_handle.jwt_response_payload_handler',
 }
 
 LOGGING = {
