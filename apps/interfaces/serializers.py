@@ -5,7 +5,7 @@ from projects.models import Projects
 
 
 class InterfacesSerializer(serializers.ModelSerializer):
-	project = serializers.StringRelatedField(label='项目名称')
+	project = serializers.StringRelatedField(label='项目名称', help_text='项目名称')
 	project_id = serializers.PrimaryKeyRelatedField(help_text='项目id', queryset=Projects.objects.all(),
 																									label='项目id', write_only=True)
 
@@ -24,3 +24,9 @@ class InterfaceNameModelSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Interfaces
 		fields = ("id", "name")
+
+		extra_kwargs = {
+			'create_time': {
+				'read_only': True
+			},
+	}
