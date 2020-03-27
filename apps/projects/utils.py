@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from django.db.models import Count
-
 from interfaces.models import Interfaces
 from testcases.models import Testcases
 from testsuits.models import Testsuits

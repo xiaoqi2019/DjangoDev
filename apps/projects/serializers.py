@@ -5,7 +5,7 @@ from debugtalks.models import DebugTalks
 from interfaces.models import Interfaces
 
 
-class ProjectModelSerializer(serializers.ModelSerializer):
+class ProjectsModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Projects

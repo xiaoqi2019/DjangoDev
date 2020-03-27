@@ -26,11 +26,10 @@ from rest_framework.documentation import include_docs_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('index/',index),
-    # 6：如果path函数的第二个参数为include，那么会进入子路由中去匹配
-    # include往往第一个参数是字符串，子应用名.urls
     path("", include("projects.urls")),
     path("", include("interfaces.urls")),
+    path("", include("testsuits.urls")),
+    # path("", include("testcases.urls")),
     path("docs/", include_docs_urls(title="测试平台接口文档")),
     path("api/", include("rest_framework.urls")),  # 使用DRF框架自带的登入和登出的页面
     path("user/", include("users.urls"))

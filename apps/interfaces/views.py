@@ -5,13 +5,14 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from .models import Interfaces
-from .serializers import InterfaceModelSerializer
-from .serializers import InterfaceNameModelSerializer
+from .serializers import InterfacesSerializer
 from rest_framework import mixins, permissions
 from rest_framework import viewsets
+from .utils import get_count_by_interface
+from testcases.models import Testcases
+from configures.models import Configures
 
 logger = logging.getLogger('test')
-
 
 class InterfaceViewSet(viewsets.ModelViewSet):
 	"""
@@ -41,32 +42,39 @@ class InterfaceViewSet(viewsets.ModelViewSet):
 
 	"""
 	queryset = Interfaces.objects.all()
-	serializer_class = InterfaceModelSerializer
-	# 需要分页过滤排序可以加上下面的三行
+	serializer_class = InterfacesSerializer
 	filter_backends = [DjangoFilterBackend, OrderingFilter]
 	filterset_fields = ['name', 'tester']
 	ordering_fields = ['id', 'name']
-	# 制定登陆之后才操作接口
 	permission_classes = [permissions.IsAuthenticated]
 
+	def list(self, request, *args, **kwargs):
+		response = super().list(request, *args, **kwargs)
+		response.data['results'] = get_count_by_interface(response.data['results'])
+		return response
 
-	@action(methods=['get'], detail=False)
-	def names(self, request, *args, **kwargs):
-		queryset = self.get_queryset()
-		serializer = self.get_serializer(instance=queryset, many=True)
-		return Response(serializer.data)
+	# 获取某个接口的用例列表
+	@action(detail=True)
+	def teastcases(self, request, pk=None):
+		testcase_obj = Testcases.objects.filter(interface_id=pk)
+		one_list = []
+		for obj in testcase_obj:
+			one_list.append({
+				"id": obj.id,
+				"name": obj.name
+			})
+		return Response(data=one_list)
 
-	# # 获取某个项目的接口列表
-	# @action(detail=True)
-	# def projects(self, request, *args, **kwargs):
-	# 	instance = self.get_object()
-	# 	serializer = self.get_serializer(instance=instance)
-	# 	return Response(serializer.data)
+	# 获取某个接口的配置列表
+	@action(detail=True)
+	def configures(self, request, pk=None):
+		configure_obj = Configures.objects.filter(interface_id=pk)
+		one_list = []
+		for obj in configure_obj:
+			one_list.append({
+				"id": obj.id,
+				"name": obj.name
+			})
+		return Response(data=one_list)
 
-	# def get_serializer_class(self):
-	# 	if self.action == "names":
-	# 		return InterfaceNameModelSerializer
-	# 	elif self.action == "projects":
-	# 		return ProjectsByProjectIdSerializer
-	# 	return self.serializer_class
 

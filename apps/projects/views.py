@@ -5,12 +5,10 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.response import Response
 from .models import Projects
 from interfaces.models import Interfaces
-from .serializers import ProjectModelSerializer
+from .serializers import ProjectsModelSerializer
 from .serializers import ProjectNameSerializer
-from rest_framework import generics, permissions
-from rest_framework import mixins
+from rest_framework import permissions
 from rest_framework import viewsets
-# from .serializers import InterfacesByProjectIdSerializer
 from .utils import get_count_by_project
 
 logger = logging.getLogger('test')
@@ -44,7 +42,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 	"""
 	queryset = Projects.objects.all()
-	serializer_class = ProjectModelSerializer
+	serializer_class = ProjectsModelSerializer
 	# 需要分页过滤排序可以加上下面的三行
 	filter_backends = [DjangoFilterBackend, OrderingFilter]
 	filterset_fields = ['name', 'leader', 'tester']
@@ -52,16 +50,6 @@ class ProjectViewSet(viewsets.ModelViewSet):
 	permission_classes = [permissions.IsAuthenticated]
 
 	def list(self, request, *args, **kwargs):
-		# queryset = self.filter_queryset(self.get_queryset())
-		#
-		# page = self.paginate_queryset(queryset)
-		# if page is not None:
-		# 	serializer = self.get_serializer(page, many=True)
-		# 	datas = get_count_by_project(serializer.data)
-		# 	return self.get_paginated_response(datas)
-		#
-		# serializer = self.get_serializer(queryset, many=True)
-		# return Response(serializer.data)
 		response = super().list(request, *args, **kwargs)  # 调用父类修改返回值
 		response.data['results'] = get_count_by_project(response.data['results'])
 		return response
