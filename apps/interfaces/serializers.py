@@ -14,10 +14,17 @@ class InterfacesSerializer(serializers.ModelSerializer):
 		fields = ('id', 'name', 'tester', 'create_time', 'project', 'project_id', 'desc')
 
 	def create(self, validated_data):
-		return super().create()
+		project = validated_data.pop('project_id')
+		validated_data['project'] = project
+		interface = Interfaces.objects.create(**validated_data)
+		return interface
 
 	def update(self, instance, validated_data):
-		return super().update()
+		if 'project_id' in validated_data:
+			project = validated_data.pop('project_id')  # 返回被删除的值-项目名字
+			validated_data['project'] = project
+		return super().update(instance, validated_data)
+
 
 class InterfaceNameModelSerializer(serializers.ModelSerializer):
 	# 接口列表只返回接口id和接口name

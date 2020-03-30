@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from .models import Reports
 from utils.format_time import format_time
 
 def get_count_by_report(datas):
