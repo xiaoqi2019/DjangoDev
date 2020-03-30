@@ -14,7 +14,7 @@ from .utils import get_count_by_project
 logger = logging.getLogger('test')
 
 
-class ProjectViewSet(viewsets.ModelViewSet):
+class ProjectsViewSet(viewsets.ModelViewSet):
 	"""
 	list:
 	获取项目列表数据

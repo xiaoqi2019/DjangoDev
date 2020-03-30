@@ -14,7 +14,7 @@ from configures.models import Configures
 
 logger = logging.getLogger('test')
 
-class InterfaceViewSet(viewsets.ModelViewSet):
+class InterfacesViewSet(viewsets.ModelViewSet):
 	"""
 	list:
 	获取接口列表数据

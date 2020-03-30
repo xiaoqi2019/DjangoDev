@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from testcases.models import Testcases
 from configures.models import Configures
+from utils.format_time import format_time
 
 def get_count_by_interface(datas):
 	"""
@@ -10,15 +11,12 @@ def get_count_by_interface(datas):
 	:return:
 	"""
 	for item in datas:
-		create_time_list = item['create_time'].split('T')
-		first_part = create_time_list[0]
-		second_part = create_time_list[1].split('.')[0]
-		item['create_time'] = first_part + ' ' + second_part
+		item['create_time'] = format_time(item['create_time'])
 		interface_id = item['id']
-		testcases_count = Testcases.objects.filter(interface_id=interface_id).count()
-		configures_count = Configures.objects.filter(interface_id=interface_id).count()
-		item['testcases'] = testcases_count
-		item['configures'] = configures_count
+		testcases = Testcases.objects.filter(interface_id=interface_id).count()
+		configures = Configures.objects.filter(interface_id=interface_id).count()
+		item['testcases'] = testcases
+		item['configures'] = configures
 	return datas
 
 

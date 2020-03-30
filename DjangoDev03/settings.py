@@ -176,7 +176,7 @@ REST_FRAMEWORK = {
     # 全局指定分页引擎类
     'DEFAULT_PAGINATION_CLASS':
 	    # 'rest_framework.pagination.PageNumberPagination',
-    #     # 指定下面的就是使用'http://localhost:9000/projects/?p=1&s=3'格式
+      # 指定下面的就是使用'http://localhost:9000/projects/?p=1&s=3'格式
         'utils.pagination.ManualPageNumberPagination',
     # 一定要指定每页获取的条数
     'PAGE_SIZE': 10,
@@ -253,4 +253,7 @@ LOGGING = {
         },
     }
 }
+
+# 在全局配置文件中，添加全局变量信息
+REPORTS_DIR = os.path.join(BASE_DIR, 'reports')
 
