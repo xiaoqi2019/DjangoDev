@@ -32,6 +32,8 @@ urlpatterns = [
     path("", include("reports.urls")),
     path("", include("envs.urls")),
     path("", include("testcases.urls")),
+    path("", include("debugtalks.urls")),
+    path("", include("configures.urls")),
     path("docs/", include_docs_urls(title="测试平台接口文档")),
     path("api/", include("rest_framework.urls")),  # 使用DRF框架自带的登入和登出的页面
     path("user/", include("users.urls"))
