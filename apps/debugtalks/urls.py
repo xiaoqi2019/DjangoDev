@@ -5,6 +5,8 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r"debugtalks", views.DebugTalksViewSet)
-urlpatterns = []
+urlpatterns = [
+
+]
 urlpatterns += router.urls
 

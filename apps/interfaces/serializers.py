@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from .models import Interfaces
 from projects.models import Projects
+from utils import validates
 
 
 class InterfacesSerializer(serializers.ModelSerializer):
@@ -37,3 +38,15 @@ class InterfaceNameModelSerializer(serializers.ModelSerializer):
 				'read_only': True
 			},
 	}
+
+class InterfaceRunSerializer(serializers.ModelSerializer):
+    """
+    通过接口来运行测试用例序列化器
+    """
+    env_id = serializers.IntegerField(write_only=True,
+                                      help_text='环境变量ID',
+                                      validators=[validates.whether_existed_env_id])
+
+    class Meta:
+        model = Interfaces
+        fields = ('id', 'env_id')

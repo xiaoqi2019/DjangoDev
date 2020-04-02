@@ -5,6 +5,9 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r"envs", views.EnvsViewSet)
-urlpatterns = []
+
+urlpatterns = [
+
+]
 urlpatterns += router.urls
 

@@ -31,14 +31,13 @@ class InterfaceAnotherSerializer(serializers.ModelSerializer):
 
 class ConfiguresSerializer(serializers.ModelSerializer):
 	"""
-	用例序列化器
+	配置序列化器
 	"""
-	interface = InterfaceAnotherSerializer(label='所属项目和接口', help_text='所属项目和接口')
+	interface = InterfaceAnotherSerializer(help_text='所属项目和接口')
 
 	class Meta:
 		model = Configures
 		fields = ('id', 'name', 'author', 'request', 'interface')
-
 		extra_kwargs = {
 			'request': {
 				'write_only': True
@@ -46,7 +45,12 @@ class ConfiguresSerializer(serializers.ModelSerializer):
 		}
 
 	def create(self, validated_data):
-		pass
+		interface_dict = validated_data.pop('interface')
+		validated_data['interface_id'] = interface_dict['iid']
+		return Configures.objects.create(**validated_data)
 
 	def update(self, instance, validated_data):
-		pass
+		if 'interface' in validated_data:
+			interface_dict = validated_data.pop('interface')
+			validated_data['interface_id'] = interface_dict['iid']
+		return super().update(instance, validated_data)

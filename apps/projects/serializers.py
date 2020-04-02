@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from testcases.models import Testcases
+from utils import validates
 from .models import Projects
 from debugtalks.models import DebugTalks
 from interfaces.models import Interfaces
@@ -20,11 +22,10 @@ class ProjectsModelSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         project_obj = super().create(validated_data)
         DebugTalks.objects.create(project=project_obj)
-
         return project_obj
 
 
-class ProjectNameSerializer(serializers.ModelSerializer):
+class ProjectNamesSerializer(serializers.ModelSerializer):
     class Meta:
         model = Projects
         fields = ('id', 'name')
@@ -42,3 +43,15 @@ class ProjectNameSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Projects
 #         fields = ('id', 'interfaces')
+
+class ProjectsRunSerializer(serializers.ModelSerializer):
+    """
+    运行测试用例序列化器
+    """
+    env_id = serializers.IntegerField(write_only=True,
+                                      help_text='环境变量ID',
+                                      validators=[validates.whether_existed_env_id])
+
+    class Meta:
+        model = Testcases
+        fields = ('id', 'env_id')

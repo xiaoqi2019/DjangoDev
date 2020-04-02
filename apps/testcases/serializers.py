@@ -2,15 +2,20 @@
 from rest_framework import serializers
 from .models import Testcases
 from interfaces.models import Interfaces
+from utils import validates
 
 # 新建一个接口序列化器，可以创建四个参数：
 # 项目名称，接口名称：read_only=True
 # 项目id， 接口id：write_only=True
 class InterfaceAnotherSerializer(serializers.ModelSerializer):
-	project = serializers.StringRelatedField(label='项目名称', help_text='项目名称')
-	pid = serializers.IntegerField(write_only=True, label='项目id', help_text='项目id')
-	iid = serializers.IntegerField(write_only=True, label='接口id', help_text='接口id')
-
+	# 所属项目名
+	project = serializers.StringRelatedField(label="所属项目名", help_text="所属项目名")
+	# 所属项目id
+	pid = serializers.IntegerField(write_only=True, label="所属项目id", help_text="所属项目id",
+	                               validators=[validates.whether_existed_project_id])
+	# 接口id
+	iid = serializers.IntegerField(write_only=True, label="接口id", help_text="接口id",
+	                               validators=[validates.whether_existed_interface_id])
 	class Meta:
 		model = Interfaces
 		fields = ('name', 'project', 'pid', 'iid')
@@ -23,7 +28,14 @@ class InterfaceAnotherSerializer(serializers.ModelSerializer):
 
 	# 需要校验接口id和项目id是否匹配
 	def validate(self, attrs):
-		pass
+		"""
+		校验项目ID是否与接口ID一致
+		:param attrs:
+		:return:
+		"""
+		if not Interfaces.objects.filter(id=attrs['iid'], project_id=attrs['pid']).exists():
+			raise serializers.ValidationError('项目和接口信息不对应！')
+		return attrs
 
 class TestcasesSerializer(serializers.ModelSerializer):
 	"""
@@ -45,18 +57,28 @@ class TestcasesSerializer(serializers.ModelSerializer):
 		}
 
 	def create(self, validated_data):
-		pass
-		# project = validated_data.pop('project_id')
-		# validated_data['project'] = project
-		# testsuit = Testcases.objects.create(**validated_data)
-		# return testsuit
+		interface_dict = validated_data.pop('interface')
+		validated_data['interface_id'] = interface_dict['iid']
+		return Testcases.objects.create(**validated_data)
 
 	def update(self, instance, validated_data):
-		pass
-		# if 'pid' in validated_data:
-		# 	pid = validated_data.pop('pid')
-		# 	validated_data['project_id'] = pid
-		#
-		# return super().update(instance, validated_data)
+		if 'interface' in validated_data:
+			interface_dict = validated_data.pop('interface')
+			validated_data['interface_id'] = interface_dict['iid']
+		return super().update(instance, validated_data)
+
+class TestcasesRunSerializer(serializers.ModelSerializer):
+	"""
+	运行测试用例序列化器
+	"""
+	env_id = serializers.IntegerField(write_only=True,
+	                                  help_text='环境变量ID',
+	                                  validators=[validates.whether_existed_env_id])
+
+	class Meta:
+		model = Testcases
+		fields = ('id', 'env_id')
+
+
 
 

@@ -3,9 +3,11 @@ from django.urls import path
 from . import views
 from rest_framework import routers
 
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 router.register(r"reports", views.ReportsViewSet)
-urlpatterns = []
+urlpatterns = [
+
+]
 urlpatterns += router.urls
 
 

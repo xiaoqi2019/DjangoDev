@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from rest_framework import serializers
+
+from utils import validates
 from .models import Testsuits
 from projects.models import Projects
 
@@ -36,5 +38,18 @@ class TestsuitesSerializer(serializers.ModelSerializer):
 			validated_data['project_id'] = pid
 
 		return super().update(instance, validated_data)
+
+
+class TestsuitsRunSerializer(serializers.ModelSerializer):
+	"""
+	通过测试套件来运行测试用例序列化器
+	"""
+	env_id = serializers.IntegerField(write_only=True,
+	                                  help_text='环境变量ID',
+	                                  validators=[validates.whether_existed_env_id])
+
+	class Meta:
+		model = Testsuits
+		fields = ('id', 'env_id')
 
 

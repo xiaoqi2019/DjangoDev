@@ -257,3 +257,10 @@ LOGGING = {
 # 在全局配置文件中，添加全局变量信息
 REPORTS_DIR = os.path.join(BASE_DIR, 'reports')
 
+# 在全局配置文件中，指定用例存放的目录
+SUITES_DIR = os.path.join(BASE_DIR, 'suites')
+
+# 创建STATIC_ROOT, 存放静态文件的目录
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+

@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 from utils.format_time import format_time
 
-def get_count_by_report(datas):
+def format_output(datas):
 	"""
 	1:对时间格式化
 	:param datas:
 	:return:
 	"""
+	datas_list = []
 	for item in datas:
+		result = 'Pass' if item['result'] else 'Fail'
+		item['result'] = result
 		item['create_time'] = format_time(item['create_time'])
-	return datas
+		datas_list.append(item)
+	return datas_list
 
 
 def get_file_content(filename):
