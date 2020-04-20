@@ -37,7 +37,6 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 
 INSTALLED_APPS = [
-    'corsheaders',  # 解决前后端跨域问题
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,16 +44,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',  # 引入DRF框架
+    'django_filters',  # 过滤引擎添加
+    'corsheaders',  # 解决前后端跨域问题
+
+
     'projects.apps.ProjectsConfig',  # 子应用添加应用名.apps.应用名Config
     'interfaces.apps.InterfacesConfig',
     'users.apps.UsersConfig',
-    'django_filters',  # 过滤引擎添加
     'testcases.apps.TestcasesConfig',
     'testsuits.apps.TestsuitsConfig',
     'reports.apps.ReportsConfig',
     'envs.apps.EnvsConfig',
     'debugtalks.apps.DebugtalksConfig',
     'configures.apps.ConfiguresConfig',
+    'summary.apps.SummaryConfig',
 ]
 
 MIDDLEWARE = [
@@ -109,13 +112,13 @@ DATABASES = {
     'default': {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 指定数据库引擎
-        'ENGINE':'django.db.backends.mysql',
+        'ENGINE': 'django.db.backends.mysql',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME':'dev_django', # 指定数据库名
-        'USER':'root', # 数据库用户名
-        'PASSWORD':'root', # 数据库密码
-        'HOST':'localhost', # 数据库主机域名或者ip
-        'PORT':'3306' # 数据库端口号
+        'NAME': 'dev_django', # 指定数据库名
+        'USER': 'root', # 数据库用户名
+        'PASSWORD': 'root', # 数据库密码
+        'HOST': 'localhost', # 数据库主机域名或者ip
+        'PORT': '3306' # 数据库端口号
     }
 }
 

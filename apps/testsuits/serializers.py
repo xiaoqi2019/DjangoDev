@@ -5,7 +5,10 @@ from utils import validates
 from .models import Testsuits
 from projects.models import Projects
 
-class TestsuitesSerializer(serializers.ModelSerializer):
+class TestsuitsSerializer(serializers.ModelSerializer):
+	"""
+	套件序列化器
+	"""
 	project = serializers.StringRelatedField(label='项目名称', help_text='项目名称')
 	project_id = serializers.PrimaryKeyRelatedField(label='项目id', queryset=Projects.objects.all(),
 																									write_only=True, help_text='项目id')
@@ -44,9 +47,7 @@ class TestsuitsRunSerializer(serializers.ModelSerializer):
 	"""
 	通过测试套件来运行测试用例序列化器
 	"""
-	env_id = serializers.IntegerField(write_only=True,
-	                                  help_text='环境变量ID',
-	                                  validators=[validates.whether_existed_env_id])
+	env_id = serializers.IntegerField(write_only=True, help_text='环境变量ID', validators=[validates.whether_existed_env_id])
 
 	class Meta:
 		model = Testsuits

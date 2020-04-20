@@ -11,6 +11,7 @@ class RegisterView(generics.CreateAPIView):
 	"""
 	serializer_class = serializers.RegisterSerializer
 
+
 class UsernameValidateView(APIView):
 	"""
 	校验用户名

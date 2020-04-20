@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.urls import path
-from . import views
 from rest_framework import routers
 
+from .views import DebugTalksViewSet
+
 router = routers.DefaultRouter()
-router.register(r"debugtalks", views.DebugTalksViewSet)
+router.register(r'debugtalks', DebugTalksViewSet)
+
 urlpatterns = [
 
 ]
