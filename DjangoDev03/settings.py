@@ -264,6 +264,6 @@ REPORTS_DIR = os.path.join(BASE_DIR, 'reports')
 SUITES_DIR = os.path.join(BASE_DIR, 'suites')
 
 # 创建STATIC_ROOT, 存放静态文件的目录
-STATIC_ROOT = os.path.join(BASE_DIR, "front_ends/static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 
