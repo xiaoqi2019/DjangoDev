@@ -3,7 +3,7 @@ from . import views
 from rest_framework import routers
 
 # # 1.创建SimpleRouter路由对象
-router = routers.SimpleRouter()
+router = routers.DefaultRouter()
 # D使用efaultRouter会自动创建一个根路径页面
 # router = routers.DefaultRouter()
 # 2.注册路由

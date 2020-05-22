@@ -55,7 +55,7 @@ class InterfacesViewSet(viewsets.ModelViewSet):
 		response.data['results'] = get_count_by_interface(response.data['results'])
 		return response
 
-	@action(detail=True)
+	@action(detail=True, url_path='testcases')
 	def teastcases(self, request, pk=None):
 		"""
 		 Returns a list of all the testcases names by interface id

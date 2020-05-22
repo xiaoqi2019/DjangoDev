@@ -71,7 +71,7 @@ class ProjectsViewSet(viewsets.ModelViewSet):
 
 	@action(detail=True)
 	def interfaces(self, request, pk=None):
-		# 方法1：使用序列化器
+		# 方法1：使用序列化器--获取某个项目下接口信息
 		# instance = self.get_object()
 		# serializer = self.get_serializer(instance=instance)
 		# return Response(serializer.data)
@@ -115,9 +115,6 @@ class ProjectsViewSet(viewsets.ModelViewSet):
 
 		# 运行用例
 		return common.run_testcase(instance, testcase_dir_path)
-
-
-
 
 
 	def get_serializer_class(self):
