@@ -65,9 +65,8 @@ def generate_testcase_files(instance, env, testcase_dir_path):
 	testcase_dir_path = os.path.join(testcase_dir_path, project_name)
 	# 创建项目名所在的文件夹
 	if not os.path.exists(testcase_dir_path):
-		os.mkdir(testcase_dir_path)
-		debugtalk_obj = DebugTalks.objects.filter(
-			project__name=project_name).first()
+		os.makedirs(testcase_dir_path)
+		debugtalk_obj = DebugTalks.objects.filter(project__name=project_name).first()
 		if debugtalk_obj:
 			debugtalk = debugtalk_obj.debugtalk
 		else:
@@ -154,7 +153,7 @@ def create_report(runner, report_name=None):
 		'name': report_name,
 		'result': runner.summary.get('success'),
 		'success': runner.summary.get('stat').get('successes'),
-		'count': runner.summary.get('stat').get('testRun'),
+		'count': runner.summary.get('stat').get('testsRun'),
 		'html': reports,
 		'summary': summary
 	}

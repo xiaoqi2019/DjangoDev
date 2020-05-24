@@ -46,7 +46,7 @@ class InterfacesViewSet(viewsets.ModelViewSet):
 	queryset = Interfaces.objects.all()
 	serializer_class = InterfacesSerializer
 	permission_classes = [permissions.IsAuthenticated]
-	filterset_fields = ['name', 'tester']
+	# filterset_fields = ['name', 'tester']
 	ordering_fields = ('id', 'name')
 
 

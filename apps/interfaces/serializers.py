@@ -12,7 +12,7 @@ class InterfacesSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Interfaces
-		fields = ('id', 'name', 'tester', 'create_time', 'project', 'project_id', 'desc')
+		fields = ('id', 'name', 'tester', 'create_time', 'desc', 'project', 'project_id')
 
 	def create(self, validated_data):
 		project = validated_data.pop('project_id')
