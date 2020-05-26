@@ -23,6 +23,8 @@ def get_testcases_by_interface_ids(ids_list):
 	"""
 	one_list = []
 	for intreface_id in ids_list:
+		# 相当于返回一个查询集，查询集中的每一个元素为用例id的值
+		# [1,2,3]
 		testcases_qs = Testcases.objects.values_list('id', flat=True).filter(intreface_id=intreface_id)
-		one_list.extend(list(testcases_qs))
+		one_list.extend(list(testcases_qs))  # 列表合并
 	return one_list

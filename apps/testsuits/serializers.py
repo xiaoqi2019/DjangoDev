@@ -36,9 +36,9 @@ class TestsuitsSerializer(serializers.ModelSerializer):
 		return testsuit
 
 	def update(self, instance, validated_data):
-		if 'pid' in validated_data:
-			pid = validated_data.pop('pid')
-			validated_data['project_id'] = pid
+		if 'project_id' in validated_data:
+			project = validated_data.pop('project_id')
+			validated_data['project'] = project
 
 		return super().update(instance, validated_data)
 

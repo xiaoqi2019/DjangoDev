@@ -26,7 +26,8 @@ sys.path.append(os.path.join(BASE_DIR, 'apps'))  # 加到系统路径列表的�
 SECRET_KEY = '0qgx5+#ej(s!y&#xz%0^7&g_onma($v%gentp_0ksgzaxo6jp7'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+# DEBUG = False
 
 # ALLOWED_HOSTS = ["外网ip", "localhost", "127.0.0.1"]
 # 设置可以用于访问项目的地址（ip,域名）
@@ -114,7 +115,7 @@ DATABASES = {
         # 指定数据库引擎
         'ENGINE': 'django.db.backends.mysql',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME': 'dev_django', # 指定数据库名
+        'NAME': 'dev_django',  # 指定数据库名
         'USER': 'root', # 数据库用户名
         'PASSWORD': 'root', # 数据库密码
         'HOST': 'localhost', # 数据库主机域名或者ip
