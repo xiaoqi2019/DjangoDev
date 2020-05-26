@@ -7,6 +7,7 @@ from django.shortcuts import render
 import logging
 from rest_framework.response import Response
 
+from rest_framework.decorators import action
 from envs.models import Envs
 from testcases.models import Testcases
 from utils import common
@@ -55,10 +56,11 @@ class TestsuitesViewSet(viewsets.ModelViewSet):
 		}
 		return Response(datas)
 
+	@action(methods=['post'], detail=True)
 	def run(self, request, pk=None):
 		instance = self.get_object()
 		serializer = self.get_serializer(instance, data=request.data)
-		serializer.is_valid(raiser_exception=True)
+		serializer.is_valid(raise_exception=True)
 		datas = serializer.validated_data
 		env_id = datas.get('env_id')
 		env = Envs.objects.get(id=env_id)
